@@ -1341,10 +1341,9 @@ function createDiagramOverlay(nameStream, versionStream, themeStream) {
     borderRadius: '0.5rem',
     fontSize: '0.9rem',
     fontWeight: 'bold',
-    pointerEvents: 'none',
+    //pointerEvents: 'none',
     transition: 'all 0.2s ease-in-out'
   });
-
 
   function update() {
     const theme = themeStream.get();
@@ -1358,6 +1357,27 @@ function createDiagramOverlay(nameStream, versionStream, themeStream) {
     overlay.textContent = `🕸️ ${name} — v${version}`;
   }
 
+  // Add the onClick event listener
+  overlay.addEventListener('click', () => {
+    
+    const versions = diagramDataStream.get().versions;
+
+    selectVersionModal(diagramName, versions).subscribe(index => {
+      if (index == null) return;
+
+      const selected = versions[index]; // No reversing, index is direct
+      diagramVersion = index + 1;
+      versionStream.set(diagramVersion);
+
+      if (selected?.xml) {
+        modeler.importXML(selected.xml);
+        showToast("Loaded version " + diagramVersion, { type: 'success' });
+      } else {
+        showToast("Selected version has no XML", { type: 'warning' });
+      }
+    });
+  });
+
   nameStream.subscribe(update);
   versionStream.subscribe(update);
   themeStream.subscribe(update);
@@ -1365,5 +1385,6 @@ function createDiagramOverlay(nameStream, versionStream, themeStream) {
 
   return overlay;
 }
+
 
 

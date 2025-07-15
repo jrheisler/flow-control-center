@@ -83,9 +83,7 @@ function reactiveLoginModal(themeStream = currentTheme) {
 
     try {
         const userCred = await firebase.auth().createUserWithEmailAndPassword(email, password);
-
-        // Optional: Add user to Firestore (if you're using Firestore)
-        const db = firebase.firestore?.();
+        //db declared at the top, in the open for the app        
         if (db) {
           await db.collection('users').doc(userCred.user.uid).set({
               email: userCred.user.email,
@@ -981,20 +979,7 @@ function openAddOnChooserModal(currentUser, themeStream = currentTheme) {
   });
   content.appendChild(listContainer);
 
-  const typeIcons = {
-    'Knowledge': '📚',
-    'Business': '💼',
-    'Requirement': '📝',
-    'Lifecycle': '🔄',
-    'Measurement': '📊',
-    'Condition': '⚖️',
-    'Material': '🧱',
-    'Role': '👤',
-    'Equipment': '🛠️',
-    'System': '⚙️',
-    'Tool': '🧰',
-    'Information': 'ℹ️'
-  };
+  
 
   addOnsStream.subscribe(addOns => {
     listContainer.innerHTML = '';

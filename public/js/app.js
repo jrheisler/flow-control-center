@@ -38,14 +38,18 @@ const defaultXml = `<?xml version="1.0" encoding="UTF-8"?>
 // === Initial BPMN XML template ===
 const diagramXMLStream = new Stream(defaultXml);
 
-document.addEventListener('DOMContentLoaded', () => {  
 
-const avatarStream = new Stream('flow.png');
+const diagramDataStream = new Stream(null);
 let currentDiagramId = null;
 let diagramName = null;
 let diagramVersion = 1;
-const diagramDataStream = new Stream(null);
 const nameStream = new Stream(diagramName);
+
+let modeler;
+
+document.addEventListener('DOMContentLoaded', () => {  
+
+const avatarStream = new Stream('flow.png');
 
 const versionStream = new Stream(diagramVersion);
 const overlay = createDiagramOverlay(
@@ -53,7 +57,6 @@ const overlay = createDiagramOverlay(
   versionStream,
   currentTheme
 );
-
 
 
 Object.assign(document.body.style, {
@@ -90,7 +93,7 @@ Object.assign(document.body.style, {
   // ─── instantiate modeler with navigator only ───────────────────────────────
   const navModule = window.navigatorModule || window.bpmnNavigator;
 
-  const modeler = new BpmnJS({
+  modeler = new BpmnJS({
     container:       canvasEl,
     selection:       { mode: 'multiple' },
     additionalModules: navModule ? [ navModule ] : []
@@ -315,7 +318,9 @@ const saveBtn = reactiveButton(
           lastUpdated: localTimestamp
         });
       }
-
+    
+      nameStream.set(metadata.name);
+      
       // Set dirty state to false and show success toast
       isDirty.set(false);
       showToast("Diagram saved successfully!", { type: 'success' });
